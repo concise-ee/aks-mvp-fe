@@ -1,26 +1,43 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Suspense } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import etLocale from 'date-fns/locale/et';
+import LoadingSpinner from './components/LoadingSpinner/LoadingSpinner';
+import { EDIT_OBJECT, NEW_OBJECT } from './configs/path-configs';
+import MapContainer from './components/map/MapContainer/MapContainer';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+const App = () => (
+  <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={etLocale}>
+    <Suspense fallback={<LoadingSpinner />}>
+      <div
+        style={{
+          height: '100%',
+          display: 'flex',
+        }}
+      >
+        <main
+          style={{
+            flexGrow: 1,
+            display: 'flex',
+            flexDirection: 'column',
+          }}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+          <div
+            style={{
+              height: '100%',
+            }}
+          >
+            <Routes>
+              <Route path={EDIT_OBJECT} />
+              <Route path={NEW_OBJECT} />
+              <Route path='/*' element={<MapContainer />} />
+            </Routes>
+          </div>
+        </main>
+      </div>
+    </Suspense>
+  </LocalizationProvider>
+);
 
 export default App;
