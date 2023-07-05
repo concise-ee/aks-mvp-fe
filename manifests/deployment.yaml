@@ -25,7 +25,7 @@ spec:
         runAsNonRoot: true
       serviceAccountName: concise-aks
       containers:
-        - name: {IMAGE_NAME}
+        - name: ${IMAGE_NAME}
           image: ${DOCKERHUB_REGISTRY}/${DOCKERHUB_USER}/${IMAGE_NAME}:${TAG_NAME}
           volumeMounts:
             # override static config.js with env.yaml mapping
