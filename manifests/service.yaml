@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${IMAGE_NAME}-svc
+  namespace: ${NAMESPACE}
+spec:
+  ports:
+    - name: http-aks-fe
+      port: 80
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: ${IMAGE_NAME}

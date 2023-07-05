@@ -1,0 +1,35 @@
+stages:
+  - release
+  - deploy
+
+variables:
+  APP: ${APP_NAME}
+  IMAGE_NAME: ${IMAGE_NAME}
+  DOCKERHUB_REGISTRY: ${DOCKERHUB_REGISTRY}
+  DOCKERHUB_USER: ${DOCKERHUB_USER}
+  DOCKERHUB_PWD: ${DOCKERHUB_PWD}
+  NAMESPACE: ${NAMESPACE}
+  DEPLOY_ENV_URL: ${DEPLOY_ENV_URL}
+  TAG_NAME: ${CI_COMMIT_SHORT_SHA}
+
+release:
+  stage: release
+  script:
+    - docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PWD} ${DOCKERHUB_REGISTRY}
+    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_USER}/${IMAGE_NAME}":"${TAG_NAME}" -f ./.docker/Dockerfile .
+    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_USER}/${IMAGE_NAME}":"${TAG_NAME}"
+
+deploy:
+  stage: deploy
+  image: scalify/kubectl-helm-helmfile:kubectl-v1114-helm-v2110-helmfile-v0401
+  before_script:
+    - unset KUBECONFIG
+  script:
+    - printenv
+    - export IMAGE_PULL_SECRET=$CI_PROJECT_NAME
+    - kubectl -n ${NAMESPACE} get secret ${APP} || kubectl -n ${NAMESPACE} create secret docker-registry ${APP} --docker-server=$DOCKERHUB_REGISTRY --docker-username=$DOCKERHUB_USER --docker-password=$DOCKERHUB_PWD
+    - envsubst < ./manifests/serviceAccount.yaml | kubectl apply -f -
+    - envsubst < ./manifests/env.yaml | kubectl apply --validate=false -f -
+    - envsubst < ./manifests/deployment.yaml | kubectl apply -f -
+    - envsubst < ./manifests/service.yaml | kubectl apply -f -
+    - envsubst < ./manifests/ingress.yaml | kubectl apply -f -
