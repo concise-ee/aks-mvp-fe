@@ -24,6 +24,11 @@ deploy:
   image: scalify/kubectl-helm-helmfile:kubectl-v1114-helm-v2110-helmfile-v0401
   before_script:
     - unset KUBECONFIG
+  variables:
+    CPU_LIMIT: 500m
+    MEMORY_LIMIT: 1024Mi
+    CPU_REQUEST: 200m
+    MEMORY_REQUEST: 256Mi
   script:
     - printenv
     - export IMAGE_PULL_SECRET=$CI_PROJECT_NAME
