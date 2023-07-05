@@ -1,37 +1,55 @@
-import React from 'react';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import React, { useState } from 'react';
+import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { styled } from '@mui/material/styles';
-import { Paper } from '@mui/material';
-import { AddressObject } from '../../../utils/address-objects/address-objects';
+import { ButtonBase, Paper } from '@mui/material';
+import { Edit } from '@mui/icons-material';
+import { Accommodation, Address } from '../../../utils/address-objects/address-objects';
+import { getEstonianDateString } from '../../../utils/general-utils';
+import ChangeExistingObjectModal from '../../ChangeExistingObjectModal/ChangeExistingObjectModal';
 
 interface Props {
-  data: AddressObject[];
+  data: Accommodation[];
 }
 
-const columns: GridColDef<AddressObject>[] = [
+const getColumns = (onClick: (id: number) => void): GridColDef<Accommodation>[] => [
   {
     field: 'name',
     headerName: 'Objekti nimi',
-    flex: 3,
+    flex: 2,
     minWidth: 120,
   },
   {
-    field: 'activeAddress',
+    field: 'addresses',
     headerName: 'Aktiivne aadress',
     flex: 3,
-    minWidth: 120,
+    minWidth: 200,
+    valueGetter: (params: GridValueGetterParams) => {
+      const activeAddress = params.row.addresses.filter((address: Address) => address.active);
+
+      return activeAddress[0].address || '';
+    },
   },
   {
     field: ' ',
     headerName: 'Viimane aadressi muudatuse aeg',
-    flex: 3,
+    flex: 2,
     minWidth: 120,
+    valueGetter: (params: GridValueGetterParams) => {
+      const activeAddress = params.row.addresses.filter((address: Address) => address.active);
+
+      return getEstonianDateString(activeAddress[0].createdAt) || '';
+    },
   },
   {
     field: '  ',
-    headerName: '',
-    flex: 3,
+    headerName: 'Muuda',
+    flex: 1,
     minWidth: 120,
+    renderCell: (params) => (
+      <ButtonBase>
+        <Edit color='primary' onClick={() => onClick} />
+      </ButtonBase>
+    ),
   },
 ];
 
@@ -51,13 +69,19 @@ const StyledDataGridPaper = styled(Paper)({
 });
 
 const ExistingObjectsTable = ({ data }: Props) => {
-  const test = '';
+  const [selectedAddress, setSelectedAddress] = useState<number>();
 
-  // @ts-ignore
+  const selectAddress = (id: number) => {
+    setSelectedAddress(id);
+  };
+
   return (
-    <StyledDataGridPaper>
-      <DataGrid columns={columns} rows={data} />
-    </StyledDataGridPaper>
+    <>
+      <ChangeExistingObjectModal selectedAddressId={selectedAddress} />
+      <StyledDataGridPaper>
+        <DataGrid columns={getColumns(selectAddress)} rows={data} />
+      </StyledDataGridPaper>
+    </>
   );
 };
 
