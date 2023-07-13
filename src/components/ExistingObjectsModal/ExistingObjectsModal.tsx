@@ -13,7 +13,7 @@ import MapContext from '../map/MapContainer/MapContext';
 import { EXISTING_OBJECTS } from '../../configs/path-configs';
 
 const defaultFilter: AccommodationFilter = {
-  searchString: null,
+  searchString: '',
   countyId: null,
   municipalityId: null,
   createdAt: null,

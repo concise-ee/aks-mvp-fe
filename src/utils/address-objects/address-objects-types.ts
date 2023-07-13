@@ -15,7 +15,7 @@ export interface Address {
 }
 
 export interface AccommodationFilter {
-  searchString: string | null;
+  searchString: string;
   countyId: number | null;
   municipalityId: number | null;
   createdAt: string | null;
