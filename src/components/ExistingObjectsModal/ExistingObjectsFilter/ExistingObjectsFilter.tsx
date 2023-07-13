@@ -1,22 +1,17 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Autocomplete, Grid, TextField, Typography } from '@mui/material';
-import { LoadingButton } from '@mui/lab';
+import React, { useEffect, useState } from 'react';
+import { Autocomplete, Button, Grid, TextField, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
-import { format, formatISO, parseISO, toDate } from 'date-fns';
 import { County, Municipality } from '../../../utils/types';
 import { getCounties, getMunicipalities } from '../../../utils/address-objects/address-objects-requests';
-import { AccommodationFilter } from '../../../utils/address-objects/address-objects';
+import { AccommodationFilter } from '../../../utils/address-objects/address-objects-types';
 
 interface Props {
-  onChange: (key: keyof AccommodationFilter, value: number | Date | null) => void;
+  onChange: (key: keyof AccommodationFilter, value: string | number | Date | null) => void;
   onSubmit: () => void;
   filterValues: AccommodationFilter;
 }
 
-const timeZone = 'Europe/Estonia';
-
-const ExistingObjectsFilter = ({ onChange, onSubmit, filterValues }: Props) => {
-  const [loading, setLoading] = useState<boolean>(false);
+const ExistingObjectsFilter = ({ onChange, filterValues, onSubmit }: Props) => {
   const [countyOptions, setCountyOptions] = useState<County[]>([]);
   const [municipalityOptions, setMunicipalityOptions] = useState<Municipality[]>([]);
 
@@ -32,7 +27,16 @@ const ExistingObjectsFilter = ({ onChange, onSubmit, filterValues }: Props) => {
   return (
     <Grid container spacing={1}>
       <Grid item xs={12}>
-        <Typography>Filter</Typography>
+        <Typography variant='h6'>Filter</Typography>
+      </Grid>
+      <Grid item xs={3}>
+        <TextField
+          fullWidth
+          size='small'
+          label='Nimi või aadress'
+          value={filterValues.searchString}
+          onChange={(event) => onChange('searchString', event.target.value)}
+        />
       </Grid>
       <Grid item xs={3}>
         <Autocomplete
@@ -55,18 +59,23 @@ const ExistingObjectsFilter = ({ onChange, onSubmit, filterValues }: Props) => {
           id='municipalityId'
           size='small'
           fullWidth
-          renderInput={(params) => <TextField {...params} label='Omavalitsus' />}
           options={municipalityOptions.map(({ name, id }) => ({ label: name, value: id }))}
           getOptionLabel={(option) => option.label}
           onChange={(event, newValue) => {
             onChange('municipalityId' as keyof AccommodationFilter, newValue?.value || null);
           }}
+          renderInput={(params) => <TextField {...params} label='Omavalitsus' />}
         />
       </Grid>
       <Grid item xs={3}>
         <DatePicker
-          label='Viimane muutmise kuupäev'
+          label='Viimane muutmise kuupäev (alates)'
           format='dd.MM.yyyy'
+          localeText={{
+            fieldDayPlaceholder: () => 'pp',
+            fieldMonthPlaceholder: () => 'kk',
+            fieldYearPlaceholder: () => 'aaaa',
+          }}
           slotProps={{
             textField: {
               InputProps: { size: 'small', fullWidth: true },
@@ -85,9 +94,9 @@ const ExistingObjectsFilter = ({ onChange, onSubmit, filterValues }: Props) => {
         />
       </Grid>
       <Grid item>
-        <LoadingButton loading={loading} variant='contained' color='primary' onClick={onSubmit}>
+        <Button color='primary' onClick={onSubmit}>
           Filtreeri
-        </LoadingButton>
+        </Button>
       </Grid>
     </Grid>
   );

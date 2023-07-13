@@ -2,12 +2,13 @@ import axios, { AxiosResponse, Method, ResponseType } from 'axios';
 
 interface RequestPayload {
   method: Method;
-  path: string;
+  path?: string;
   data?: unknown;
   baseUrl?: string;
   contentType?: string;
   responseType?: ResponseType;
   withCredentials?: boolean;
+  params?: string;
 }
 
 export const baseRequest = async ({
@@ -16,14 +17,15 @@ export const baseRequest = async ({
   data,
   baseUrl,
   contentType,
+  params,
   responseType = 'json',
 }: RequestPayload) => {
   const BASE_URL = process.env.NODE_ENV === 'development' ? 'http://localhost:8080/' : '';
 
   const options: Record<string, unknown> = {
     method,
-    baseURL: baseUrl || BASE_URL,
-    url: path,
+    baseURL: (baseUrl || BASE_URL) + (params || ''),
+    url: path || '',
     headers: {
       Accept: '*/*',
       'Content-Type': contentType || 'application/json',

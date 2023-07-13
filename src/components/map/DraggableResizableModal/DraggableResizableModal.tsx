@@ -40,6 +40,7 @@ interface DraggableResizableModalProps {
   onMinimize?: (minimized: boolean) => void;
   top?: number;
   left?: number;
+  fullHeight?: boolean;
   unmountOnExit?: boolean;
 }
 
@@ -112,6 +113,7 @@ const DraggableResizableModal = ({
   onMinimize,
   top = getDefaultTop(),
   left = getDefaultLeft(),
+  fullHeight,
   unmountOnExit = false,
 }: DraggableResizableModalProps) => {
   const { map } = useContext(MapContext);
@@ -169,8 +171,6 @@ const DraggableResizableModal = ({
     }
   };
 
-  const handleDragStop = () => {};
-
   return (
     <div ref={modalRef}>
       <Grow in={open} timeout={350} unmountOnExit={unmountOnExit}>
@@ -202,7 +202,7 @@ const DraggableResizableModal = ({
                       ) : null}
                     </Grid>
                   </StyledHeader>
-                  <StyledContent item container height='100%' maxHeight='100%'>
+                  <StyledContent item container maxHeight='100%' height={fullHeight ? '100%' : 'auto'}>
                     {children}
                   </StyledContent>
                 </StyledContainer>

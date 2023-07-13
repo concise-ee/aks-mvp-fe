@@ -3,9 +3,11 @@ import { Route, Routes } from 'react-router-dom';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import etLocale from 'date-fns/locale/et';
+import { Slide, ToastContainer } from 'react-toastify';
 import LoadingSpinner from './components/LoadingSpinner/LoadingSpinner';
-import { EDIT_OBJECT, NEW_OBJECT } from './configs/path-configs';
 import MapContainer from './components/map/MapContainer/MapContainer';
+import 'react-toastify/dist/ReactToastify.min.css';
+import HeaderNavigationContainer from './components/header/HeaderNavigationContainer/HeaderNavigationContainer';
 
 const App = () => (
   <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={etLocale}>
@@ -16,6 +18,15 @@ const App = () => (
           display: 'flex',
         }}
       >
+        <ToastContainer
+          position='top-center'
+          autoClose={4500}
+          transition={Slide}
+          hideProgressBar
+          closeOnClick
+          rtl={false}
+        />
+        <HeaderNavigationContainer />
         <main
           style={{
             flexGrow: 1,
@@ -29,8 +40,6 @@ const App = () => (
             }}
           >
             <Routes>
-              <Route path={EDIT_OBJECT} />
-              <Route path={NEW_OBJECT} />
               <Route path='/*' element={<MapContainer />} />
             </Routes>
           </div>
