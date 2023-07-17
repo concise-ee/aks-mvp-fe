@@ -25,20 +25,21 @@ const ExistingObjectsFilter = ({ onChange, filterValues, onSubmit }: Props) => {
   };
 
   return (
-    <Grid container spacing={1}>
+    <Grid container spacing={1} alignItems='flex-end'>
       <Grid item xs={12}>
         <Typography variant='h6'>Filter</Typography>
       </Grid>
-      <Grid item xs={3}>
+      <Grid item xs={2.5}>
+        <Grid fontSize='0.875rem'>Nimi või aadress</Grid>
         <TextField
           fullWidth
           size='small'
-          label='Nimi või aadress'
           value={filterValues.searchString}
           onChange={(event) => onChange('searchString', event.target.value)}
         />
       </Grid>
-      <Grid item xs={3}>
+      <Grid item xs={2.5}>
+        <Grid fontSize='0.875rem'>Maakond</Grid>
         <Autocomplete
           id='countyId'
           size='small'
@@ -51,10 +52,11 @@ const ExistingObjectsFilter = ({ onChange, filterValues, onSubmit }: Props) => {
           onChange={(event, newValue) => {
             onChange('countyId' as keyof AccommodationFilter, newValue?.value || null);
           }}
-          renderInput={(params) => <TextField {...params} label='Maakond' />}
+          renderInput={(params) => <TextField {...params} />}
         />
       </Grid>
-      <Grid item xs={3}>
+      <Grid item xs={2.5}>
+        <Grid fontSize='0.875rem'>Omavalitsus</Grid>
         <Autocomplete
           id='municipalityId'
           size='small'
@@ -68,8 +70,8 @@ const ExistingObjectsFilter = ({ onChange, filterValues, onSubmit }: Props) => {
         />
       </Grid>
       <Grid item xs={3}>
+        <Grid fontSize='0.875rem'>Viimane muutus (alates)</Grid>
         <DatePicker
-          label='Viimane muutmise kuupäev (alates)'
           format='dd.MM.yyyy'
           localeText={{
             fieldDayPlaceholder: () => 'pp',
@@ -93,7 +95,7 @@ const ExistingObjectsFilter = ({ onChange, filterValues, onSubmit }: Props) => {
           }}
         />
       </Grid>
-      <Grid item>
+      <Grid item xs={1.5}>
         <Button color='primary' onClick={onSubmit}>
           Filtreeri
         </Button>

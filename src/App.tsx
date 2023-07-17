@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { LocalizationProvider } from '@mui/x-date-pickers';
+import { styled } from '@mui/material/styles';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import etLocale from 'date-fns/locale/et';
 import { Slide, ToastContainer } from 'react-toastify';
@@ -8,6 +9,10 @@ import LoadingSpinner from './components/LoadingSpinner/LoadingSpinner';
 import MapContainer from './components/map/MapContainer/MapContainer';
 import 'react-toastify/dist/ReactToastify.min.css';
 import HeaderNavigationContainer from './components/header/HeaderNavigationContainer/HeaderNavigationContainer';
+
+const StyledDivider = styled('div')(({ theme }) => ({
+  ...theme.mixins.toolbar,
+}));
 
 const App = () => (
   <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={etLocale}>
@@ -34,6 +39,7 @@ const App = () => (
             flexDirection: 'column',
           }}
         >
+          <StyledDivider />
           <div
             style={{
               height: '100%',

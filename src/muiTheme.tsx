@@ -22,6 +22,7 @@ const theme = createTheme({
           fontSize: '14px',
           textTransform: 'none',
           boxShadow: 'none',
+          borderRadius: 20,
         },
       },
       defaultProps: {

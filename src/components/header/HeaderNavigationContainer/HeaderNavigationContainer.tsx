@@ -1,20 +1,22 @@
 import React, { ReactNode, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import {
+  AppBar,
   ButtonBase,
   ButtonBaseProps,
-  Divider,
   Drawer,
   DrawerProps,
   List,
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Toolbar,
 } from '@mui/material';
 import { CreateNewFolder, Folder, MenuOpen } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import theme from '../../../muiTheme';
 import { EXISTING_OBJECTS, NEW_OBJECT } from '../../../configs/path-configs';
+import { ReactComponent as Logo } from '../../../assets/Shield.svg';
 
 interface StyledDrawerProps extends DrawerProps {
   open?: boolean;
@@ -141,6 +143,12 @@ const HeaderNavigationContainer = () => {
 
   return (
     <>
+      <AppBar position='fixed' color='transparent' sx={{ zIndex: theme.zIndex.drawer + 1 }} elevation={0}>
+        <Toolbar sx={{ backgroundColor: '#FFFFFF', color: 'primary.main', fontSize: '1.3rem' }}>
+          <Logo height={36} style={{ marginRight: 8, marginLeft: 16, marginTop: 4 }} />
+          Aadresside ja kohanimede süsteem
+        </Toolbar>
+      </AppBar>
       <StyledDrawer variant='permanent' open={open}>
         <List>{menuItems.map((item) => renderMenuItem(item))}</List>
       </StyledDrawer>
