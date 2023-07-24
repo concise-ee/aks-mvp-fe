@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { styled } from '@mui/material/styles';
-import { ButtonBase, LabelDisplayedRowsArgs, Paper } from '@mui/material';
+import { ButtonBase, LabelDisplayedRowsArgs, Paper, Grid } from '@mui/material';
 import { Edit, History, Room } from '@mui/icons-material';
 import { Accommodation, Address } from '../../../utils/address-objects/address-objects-types';
 import { getEstonianDateString } from '../../../utils/general-utils';
@@ -25,64 +25,50 @@ const getColumns = (
     minWidth: 120,
   },
   {
-    field: 'addresses',
+    field: 'addressess',
     headerName: 'Aktiivne aadress',
     flex: 4,
     minWidth: 250,
     valueGetter: (params: GridValueGetterParams) => {
-      const activeAddress = params.row.addresses.filter((address: Address) => address.active);
+      const activeAddress = params.row.addresses.find((address: Address) => address.active);
 
-      return activeAddress[0].address || '';
+      return activeAddress?.address || '';
     },
   },
   {
-    field: ' ',
+    field: 'lastModified',
     headerName: 'Viimane aadressi muudatuse aeg',
     flex: 2,
     minWidth: 120,
     valueGetter: (params: GridValueGetterParams) => {
-      const activeAddress = params.row.addresses.filter((address: Address) => address.active);
-
-      return getEstonianDateString(activeAddress[0].createdAt) || '';
+      const activeAddress = params.row.addresses.find((address: Address) => address.active);
+      return getEstonianDateString(activeAddress?.createdAt) || '';
     },
   },
   {
     field: '  ',
     headerName: '',
-    flex: 0.5,
-    minWidth: 40,
+    minWidth: 120,
     sortable: false,
     disableColumnMenu: false,
     renderCell: (params) => (
-      <ButtonBase>
-        <Room color='primary' onClick={() => showOnMap(params.row as Accommodation)} />
-      </ButtonBase>
-    ),
-  },
-  {
-    field: '   ',
-    headerName: '',
-    flex: 0.5,
-    minWidth: 40,
-    sortable: false,
-    disableColumnMenu: false,
-    renderCell: (params) => (
-      <ButtonBase>
-        <History color='primary' onClick={() => onClickView(params.row.id, params.row.name)} />
-      </ButtonBase>
-    ),
-  },
-  {
-    field: '    ',
-    headerName: '',
-    flex: 0.5,
-    minWidth: 40,
-    sortable: false,
-    disableColumnMenu: false,
-    renderCell: (params) => (
-      <ButtonBase>
-        <Edit color='primary' onClick={() => onClickEdit(params.row.id)} />
-      </ButtonBase>
+      <Grid container spacing={1}>
+        <Grid item>
+          <ButtonBase>
+            <Room color='primary' onClick={() => showOnMap(params.row as Accommodation)} />
+          </ButtonBase>
+        </Grid>
+        <Grid item>
+          <ButtonBase>
+            <History color='primary' onClick={() => onClickView(params.row.id, params.row.name)} />
+          </ButtonBase>
+        </Grid>
+        <Grid item>
+          <ButtonBase>
+            <Edit color='primary' onClick={() => onClickEdit(params.row.id)} />
+          </ButtonBase>
+        </Grid>
+      </Grid>
     ),
   },
 ];
@@ -106,6 +92,7 @@ const ExistingObjectsTable = ({ data, selectAddressToEdit, selectAddresToViewHis
   <StyledDataGridPaper>
     <DataGrid
       disableRowSelectionOnClick
+      getRowId={(address: Accommodation) => address.id}
       rows={data}
       columns={getColumns(selectAddressToEdit, selectAddresToViewHistory, showOnMap)}
       slotProps={{

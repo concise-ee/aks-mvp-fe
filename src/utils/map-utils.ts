@@ -6,8 +6,7 @@ import { ImageWMS, XYZ } from 'ol/source';
 import TileLayer from 'ol/layer/Tile';
 import TileGrid from 'ol/tilegrid/TileGrid';
 import { Coordinate } from 'ol/coordinate';
-import { Select } from 'ol/interaction';
-import { Geometry, MultiPoint, Point } from 'ol/geom';
+import { Geometry, Point } from 'ol/geom';
 import BaseLayer from 'ol/layer/Base';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
@@ -18,7 +17,7 @@ import mapConfig from '../configs/map-config';
 
 interface VectorParams {
   edgeColor: string | number[] | CanvasGradient | CanvasPattern;
-  feature: Feature<Geometry>;
+  features: Feature<Geometry>[];
   vertexColor?: string | number[] | CanvasGradient | CanvasPattern;
   hasFill?: boolean;
   width?: number;
@@ -75,7 +74,7 @@ export const initMap = (mapElement: HTMLElement): Map =>
 const getLayerByName = (layers: Collection<BaseLayer>, name: string): BaseLayer | null =>
   layers.getArray().find((layer: BaseLayer) => layer.get('name') === name) || null;
 
-const createVector = ({ feature, edgeColor }: VectorParams): VectorLayer<VectorSource<any>> => {
+const createVector = ({ features, edgeColor }: VectorParams): VectorLayer<VectorSource<any>> => {
   const style = [
     new Style({
       stroke: new Stroke({
@@ -93,7 +92,7 @@ const createVector = ({ feature, edgeColor }: VectorParams): VectorLayer<VectorS
 
   return new VectorLayer({
     source: new VectorSource({
-      features: [feature as Feature<Geometry>],
+      features,
     }),
     style,
   });
@@ -125,11 +124,30 @@ export const drawAddressObjectPoint = (map: Map, coordinates: Coordinate, zoom?:
     source?.addFeature(feature);
   } else {
     const vector = createVector({
-      feature,
+      features: [feature],
       edgeColor: '#0099ff',
     });
 
     vector.set('name', 'objectPointsLayer');
+    map.addLayer(vector);
+  }
+};
+
+export const drawAllPoints = (map: Map, coordinates: Coordinate[]): void => {
+  const features = coordinates.map((coordinate: Coordinate) => new Feature(new Point(coordinate)));
+  const allPointsLayer = getLayerByName(map.getLayers(), 'allPointsLayer') as VectorLayer<VectorSource<Geometry>>;
+
+  if (allPointsLayer) {
+    const source = allPointsLayer.getSource();
+    source?.clear();
+    source?.addFeatures(features);
+  } else {
+    const vector = createVector({
+      features,
+      edgeColor: '#005f9b',
+    });
+
+    vector.set('name', 'allPointsLayer');
     map.addLayer(vector);
   }
 };
@@ -139,6 +157,17 @@ export const removeAddressObjectPointLayer = (map: Map) => {
     .getLayers()
     .getArray()
     .find((layer: BaseLayer) => layer.get('name') === 'objectPointsLayer');
+
+  if (pointLayer) {
+    map.removeLayer(pointLayer);
+  }
+};
+
+export const removeAllPointsLayer = (map: Map) => {
+  const pointLayer = map
+    .getLayers()
+    .getArray()
+    .find((layer: BaseLayer) => layer.get('name') === 'allPointsLayer');
 
   if (pointLayer) {
     map.removeLayer(pointLayer);

@@ -5,10 +5,10 @@ import DraggableResizableModal from '../map/DraggableResizableModal/DraggableRes
 import ExistingObjectsTable from './ExistingObjectsTable/ExistingObjectsTable';
 import ExistingObjectsFilter from './ExistingObjectsFilter/ExistingObjectsFilter';
 import { getAllAccommodations, getFilteredAccommodations } from '../../utils/address-objects/address-objects-requests';
-import { Accommodation, AccommodationFilter } from '../../utils/address-objects/address-objects-types';
+import { Accommodation, AccommodationFilter, Address } from '../../utils/address-objects/address-objects-types';
 import ChangeExistingObjectModal from '../ChangeExistingObjectModal/ChangeExistingObjectModal';
 import ExistingObjectHistoryModal from '../ExistingObjectHistoryModal/ExistingObjectHistoryModal';
-import { drawAddressObjectPoint } from '../../utils/map-utils';
+import { drawAddressObjectPoint, drawAllPoints, removeAllPointsLayer } from '../../utils/map-utils';
 import MapContext from '../map/MapContainer/MapContext';
 import { EXISTING_OBJECTS } from '../../configs/path-configs';
 
@@ -40,6 +40,10 @@ const ExistingObjectsModal = () => {
   useEffect(() => {
     fetchAccommodations();
   }, []);
+
+  useEffect(() => {
+    drawAllAccommodations(data);
+  }, [map, data]);
 
   const fetchAccommodations = async () => {
     setData(await getAllAccommodations());
@@ -76,6 +80,25 @@ const ExistingObjectsModal = () => {
     drawAddressObjectPoint(map, coordinates, true);
   };
 
+  const drawAllAccommodations = (accommodations: Accommodation[]) => {
+    if (!map) return;
+    const coordinates = accommodations.flatMap((accommodation: Accommodation) => {
+      const activeAddress = accommodation.addresses.find((address: Address) => address.active);
+      if (activeAddress) {
+        return [[activeAddress.centroidX, activeAddress.centroidY]];
+      }
+      return [];
+    });
+    drawAllPoints(map, coordinates);
+  };
+
+  const handleClose = () => {
+    if (map) {
+      removeAllPointsLayer(map);
+    }
+    navigate('/');
+  };
+
   return (
     <div>
       <ExistingObjectHistoryModal
@@ -92,7 +115,7 @@ const ExistingObjectsModal = () => {
         open={open}
         title='Eksisteerivad objektid'
         defaultSize={[950, 700]}
-        onClose={() => navigate('/')}
+        onClose={handleClose}
       >
         <Grid item container spacing={1} flexDirection='column' flexWrap='nowrap'>
           <Grid item flexShrink={0} flexBasis='auto'>

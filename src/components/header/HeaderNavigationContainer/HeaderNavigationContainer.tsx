@@ -100,7 +100,7 @@ const menuItems = [
   },
   {
     label: 'Lisa uus objekt',
-    key: 'existingObjects',
+    key: 'newObject',
     path: NEW_OBJECT,
     icon: <CreateNewFolder sx={{ color: 'white' }} />,
   },

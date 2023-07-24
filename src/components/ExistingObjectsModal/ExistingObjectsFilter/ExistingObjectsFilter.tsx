@@ -66,7 +66,7 @@ const ExistingObjectsFilter = ({ onChange, filterValues, onSubmit }: Props) => {
           onChange={(event, newValue) => {
             onChange('municipalityId' as keyof AccommodationFilter, newValue?.value || null);
           }}
-          renderInput={(params) => <TextField {...params} label='Omavalitsus' />}
+          renderInput={(params) => <TextField {...params} />}
         />
       </Grid>
       <Grid item xs={3}>
