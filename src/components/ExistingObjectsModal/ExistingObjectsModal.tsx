@@ -85,7 +85,7 @@ const ExistingObjectsModal = () => {
     const coordinates = accommodations.flatMap((accommodation: Accommodation) => {
       const activeAddress = accommodation.addresses.find((address: Address) => address.active);
       if (activeAddress) {
-        return [[activeAddress.centroidX, activeAddress.centroidY]];
+        return [[+activeAddress.centroidX, +activeAddress.centroidY]];
       }
       return [];
     });

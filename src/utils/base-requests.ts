@@ -20,7 +20,8 @@ export const baseRequest = async ({
   params,
   responseType = 'json',
 }: RequestPayload) => {
-  const BASE_URL = process.env.NODE_ENV === 'development' ? 'http://localhost:8080/' : '';
+  // @ts-ignore
+  const BASE_URL = process.env.NODE_ENV === 'development' ? 'http://localhost:8080/' : window.BE_URL;
 
   const options: Record<string, unknown> = {
     method,

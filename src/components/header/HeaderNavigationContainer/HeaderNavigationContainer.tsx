@@ -16,6 +16,7 @@ import { CreateNewFolder, Folder, MenuOpen } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import theme from '../../../muiTheme';
 import { EXISTING_OBJECTS, NEW_OBJECT } from '../../../configs/path-configs';
+// @ts-ignore
 import { ReactComponent as Logo } from '../../../assets/Shield.svg';
 
 interface StyledDrawerProps extends DrawerProps {
