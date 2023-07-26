@@ -119,6 +119,8 @@ const NewObjectModal = ({ selectMode, setMode, isActive }: Props) => {
 
     if (response?.addresses) {
       setAddresOptions(parseInAddressResponse(response));
+    } else {
+      setAddresOptions([]);
     }
   };
 
@@ -209,11 +211,13 @@ const NewObjectModal = ({ selectMode, setMode, isActive }: Props) => {
                 loadingText='Pärimine...'
                 options={addressOptions}
                 value={selectedAddress}
+                filterOptions={(option) => option}
                 onChange={(event, newValue, reason) => {
                   if (reason === 'clear') {
                     handleClearAddress();
                   } else {
                     handleChangeAccommodationValueChange('adsOid', newValue?.value as string);
+                    setSelectedAddress(newValue as ParsedInAddressResponse);
                   }
                 }}
                 renderInput={(params) => (
