@@ -77,11 +77,13 @@ const ExistingObjectsFilter = ({ onChange, filterValues, onSubmit }: Props) => {
             fieldDayPlaceholder: () => 'pp',
             fieldMonthPlaceholder: () => 'kk',
             fieldYearPlaceholder: () => 'aaaa',
+            clearButtonLabel: 'Puhasta'
           }}
           slotProps={{
             textField: {
               InputProps: { size: 'small', fullWidth: true },
             },
+            actionBar: { actions: ['clear'] }
           }}
           onChange={(event) => {
             if (event) {

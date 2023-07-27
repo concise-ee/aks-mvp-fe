@@ -1,7 +1,7 @@
 import React from 'react';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { styled } from '@mui/material/styles';
-import { ButtonBase, LabelDisplayedRowsArgs, Paper, Grid } from '@mui/material';
+import {ButtonBase, LabelDisplayedRowsArgs, Paper, Grid, Tooltip} from '@mui/material';
 import { Edit, History, Room } from '@mui/icons-material';
 import { Accommodation, Address } from '../../../utils/address-objects/address-objects-types';
 import { getEstonianDateString } from '../../../utils/general-utils';
@@ -54,19 +54,25 @@ const getColumns = (
     renderCell: (params) => (
       <Grid container spacing={1}>
         <Grid item>
-          <ButtonBase>
-            <Room color='primary' onClick={() => showOnMap(params.row as Accommodation)} />
-          </ButtonBase>
+          <Tooltip title='Kuva kaardil'>
+            <ButtonBase>
+              <Room color='primary' onClick={() => showOnMap(params.row as Accommodation)}/>
+            </ButtonBase>
+          </Tooltip>
         </Grid>
         <Grid item>
-          <ButtonBase>
-            <History color='primary' onClick={() => onClickView(params.row.id, params.row.name)} />
-          </ButtonBase>
+          <Tooltip title='Kuva aadresside ajalugu'>
+            <ButtonBase>
+              <History color='primary' onClick={() => onClickView(params.row.id, params.row.name)}/>
+            </ButtonBase>
+          </Tooltip>
         </Grid>
         <Grid item>
-          <ButtonBase>
-            <Edit color='primary' onClick={() => onClickEdit(params.row.id)} />
-          </ButtonBase>
+          <Tooltip title='Muuda aadressi'>
+            <ButtonBase>
+              <Edit color='primary' onClick={() => onClickEdit(params.row.id)}/>
+            </ButtonBase>
+          </Tooltip>
         </Grid>
       </Grid>
     ),

@@ -35,11 +35,18 @@ const ChangeExistingObjectModal = ({ selectedAddressId, onPatchCallback, onClose
   useEffect(() => {
     if (debouncedValue.length > 1) {
       fetchAddresses(debouncedValue);
+    } else {
+      setAddresOptions([]);
     }
   }, [debouncedValue]);
 
   const handleValueChange = (value: string) => {
     setNewAddress(value);
+  };
+
+  const clearValueAfterClosed = () => {
+    setAddresOptions([]);
+    onClose();
   };
 
   const handleValueSelect = (value: string | undefined) => {
@@ -65,6 +72,7 @@ const ChangeExistingObjectModal = ({ selectedAddressId, onPatchCallback, onClose
 
     if (patchResponse) {
       toast.success('Aadress edukalt muudetud!');
+      setAddresOptions([]);
       onPatchCallback(patchResponse);
     } else {
       toast.error('Aadressi muutmisel esines viga.');
@@ -72,10 +80,10 @@ const ChangeExistingObjectModal = ({ selectedAddressId, onPatchCallback, onClose
   };
 
   return (
-    <Dialog open={!!selectedAddressId} maxWidth='xs' fullWidth onClose={onClose}>
+    <Dialog open={!!selectedAddressId} maxWidth='xs' fullWidth onClose={clearValueAfterClosed}>
       <DialogTitle sx={{ alignItems: 'center' }}>
         Muuda aadress
-        <IconButton onClick={onClose}>
+        <IconButton onClick={clearValueAfterClosed}>
           <Close />
         </IconButton>{' '}
       </DialogTitle>
@@ -87,6 +95,7 @@ const ChangeExistingObjectModal = ({ selectedAddressId, onPatchCallback, onClose
           <Grid item xs={9}>
             <Autocomplete
               fullWidth
+              filterOptions={(option) => option}
               size='small'
               noOptionsText='Aadressid puuduvad'
               loading={loadingOptions}
