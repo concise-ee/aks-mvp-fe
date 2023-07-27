@@ -22,7 +22,7 @@ import { SelectMode } from '../../utils/types';
 import { useAppSelector } from '../../redux/reduxHooks';
 import { parseInAddressResponse } from '../../utils/general-utils';
 import { NEW_OBJECT } from '../../configs/path-configs';
-import { drawAddressObjectPoint } from '../../utils/map-utils';
+import {drawAddressObjectPoint, drawHighlight, removeHightlightLayer, zoomToCoordinate} from '../../utils/map-utils';
 
 const initialAccommodation = {} as NewAccommodation;
 
@@ -77,20 +77,6 @@ const NewObjectModal = ({ selectMode, setMode, isActive }: Props) => {
     }
   }, [addressOptions]);
 
-  const fetchObjectByCoordiantes = async (coordinate: Coordinate) => {
-    const response = await getAddressByCoordinates(coordinate[0], coordinate[1]);
-
-    if (response?.addresses) {
-      const parsedResponse = parseInAddressResponse(response);
-
-      setAddresOptions(parsedResponse);
-      setNewAccommodation((prevState) => ({ ...prevState, adsOid: parsedResponse[0].value }));
-      if (map) {
-        drawAddressObjectPoint(map, coordinate);
-      }
-    }
-  };
-
   useEffect(() => {
     if (!map) return;
 
@@ -104,6 +90,31 @@ const NewObjectModal = ({ selectMode, setMode, isActive }: Props) => {
       setEventKey(key);
     }
   }, [isActive, map]);
+
+  useEffect(() => {
+    if (!map) return;
+
+    if (selectedAddress && !clickCooordinate) {
+      drawHighlight(map, selectedAddress.coordinate);
+      zoomToCoordinate(map, selectedAddress.coordinate)
+    } else {
+      removeHightlightLayer(map);
+    }
+  }, [selectedAddress]);
+
+  const fetchObjectByCoordiantes = async (coordinate: Coordinate) => {
+    const response = await getAddressByCoordinates(coordinate[0], coordinate[1]);
+
+    if (response?.addresses) {
+      const parsedResponse = parseInAddressResponse(response);
+
+      setAddresOptions(parsedResponse);
+      setNewAccommodation((prevState) => ({ ...prevState, adsOid: parsedResponse[0].value }));
+      if (map) {
+        drawAddressObjectPoint(map, coordinate);
+      }
+    }
+  };
 
   const handleClickPosition = async ({ coordinate }: MapBrowserEvent<UIEvent>) => {
     if (!map) return;

@@ -39,4 +39,5 @@ export interface NewAccommodation {
 export interface ParsedInAddressResponse {
   value: string;
   label: string;
+  coordinate: [number, number];
 }

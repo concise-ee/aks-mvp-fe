@@ -7,5 +7,5 @@ export const getEstonianDateString = (dateString?: string | null): string =>
 export const parseInAddressResponse = (data: InAadressResponse): ParsedInAddressResponse[] => {
   if (!data.addresses) return [];
 
-  return data.addresses.map(({ ads_oid, pikkaadress }) => ({ value: ads_oid, label: pikkaadress }));
+  return data.addresses.map(({ ads_oid, pikkaadress, viitepunkt_x, viitepunkt_y }) => ({ value: ads_oid, label: pikkaadress, coordinate: [+viitepunkt_x, +viitepunkt_y] }));
 };

@@ -111,6 +111,17 @@ export const zoomToGeometry = (map: Map, feature: Feature<Geometry>): void => {
   });
 };
 
+export const zoomToCoordinate = (map: Map, coordinate: Coordinate): void => {
+  const point = new Point(coordinate);
+  const view = map.getView();
+  const extent = point.getExtent();
+  view.animate({
+    center: getCenter(extent),
+    resolution: view.getResolutionForExtent(extent) + 0.5,
+    duration: 1000,
+  });
+};
+
 export const drawAddressObjectPoint = (map: Map, coordinates: Coordinate, zoom?: boolean): void => {
   const feature = new Feature(new Point(coordinates));
   const objectPointsLayer = getLayerByName(map.getLayers(), 'objectPointsLayer') as VectorLayer<VectorSource<Geometry>>;
@@ -152,6 +163,25 @@ export const drawAllPoints = (map: Map, coordinates: Coordinate[]): void => {
   }
 };
 
+export const drawHighlight = (map: Map, coordinate: Coordinate): void => {
+  const feature = new Feature(new Point(coordinate));
+  const layer = getLayerByName(map.getLayers(), 'highlightLayer') as VectorLayer<VectorSource<Geometry>>;
+
+  if (layer) {
+    const source = layer.getSource();
+    source?.clear();
+    source?.addFeature(feature);
+  } else {
+    const vector = createVector({
+      features: [feature],
+      edgeColor: '#ff0080',
+    });
+
+    vector.set('name', 'highlightLayer');
+    map.addLayer(vector);
+  }
+};
+
 export const removeAddressObjectPointLayer = (map: Map) => {
   const pointLayer = map
     .getLayers()
@@ -168,6 +198,17 @@ export const removeAllPointsLayer = (map: Map) => {
     .getLayers()
     .getArray()
     .find((layer: BaseLayer) => layer.get('name') === 'allPointsLayer');
+
+  if (pointLayer) {
+    map.removeLayer(pointLayer);
+  }
+};
+
+export const removeHightlightLayer = (map: Map) => {
+  const pointLayer = map
+    .getLayers()
+    .getArray()
+    .find((layer: BaseLayer) => layer.get('name') === 'highlightLayer');
 
   if (pointLayer) {
     map.removeLayer(pointLayer);
